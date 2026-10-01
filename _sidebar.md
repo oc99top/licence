@@ -4,6 +4,7 @@
   - [概览](rules/)
   - 群规
     - [标准群规](rules/group/normal.md)
+    - [大白话版群规](rules/group/normalx.md)
 
 - 二创声明
   - [概览](statements/)
