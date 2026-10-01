@@ -35,6 +35,13 @@
 ├── licenses/           # 授权证书 / 许可文本
 │   ├── README.md
 │   └── *.md
+├── oc99/               # 组织简介与正式授权文本
+│   └── README.md
+├── assets/             # Dosify 主题资源
+│   ├── css/dosify.css
+│   └── js/dosify-sidebar.js
+├── index.html          # 文档站点入口（docsify + Dosify 主题）
+├── _sidebar.md         # 侧边栏目录（支持多级折叠）
 ├── CHANGELOG.md        # 版本变更记录
 └── README.md
 ```
@@ -51,6 +58,56 @@
 | 规则模板 | `rules/` | 供项目、社区或活动直接套用的规则框架 |
 | 二创声明 | `statements/` | 二次创作授权范围、署名要求与限制条款 |
 | 授权证书 | `licenses/` | 正式授权文本、证书模板及许可说明 |
+| 站点入口 | `index.html` | docsify 站点入口，启用 Dosify 主题 |
+| 主题样式 | `assets/css/dosify.css` | Dosify 主题样式（手机 / 电脑双端适配） |
+| 侧边栏插件 | `assets/js/dosify-sidebar.js` | 一 / 二 / 三级目录可折叠 |
+| 侧边栏目录 | `_sidebar.md` | 文档站左侧目录结构定义 |
+
+---
+
+## 在线文档（Dosify 主题）
+
+本仓库内置一套自研文档主题 **Dosify**，基于 [docsify](https://docsify.js.org/) 驱动，可直接使用 GitHub Pages 或任意静态服务器托管。
+
+### 特性
+
+- **双端适配**：桌面端固定左侧目录（300px），左上角菜单按钮可一键收起 / 展开侧边栏，收起后正文占满整宽（状态会记忆）；移动端折叠为抽屉式侧边栏，配半透明遮罩，点击遮罩或按 `Esc` 关闭；
+- **多级折叠**：一级 / 二级 / 三级目录均可展开与收起（超出三级的层级始终展开），子级缩进并以虚线引导；
+- **文本与链接**：目录项未设置链接时渲染为纯文本（仅作分组标题）；设置链接时可点击跳转，箭头与文字各自响应；
+- **吸顶快速收起**：展开状态下目录过长时，一级 / 二级 / 三级标题会在滚动中依次吸附在侧边栏顶部、不再上移，随时可一键收起；
+- **状态记忆**：展开状态保存在 `localStorage`，刷新或切换页面后保持不变，并自动展开当前页面所在路径；
+- **深色模式**：跟随系统 `prefers-color-scheme` 自动切换配色。
+
+### 本地预览
+
+站点需通过 HTTP 访问（docsify 以 XHR 加载 Markdown，直接双击 `index.html` 会被浏览器拦截）：
+
+```bash
+npx serve .
+# 或
+python -m http.server 3000
+```
+
+然后访问 `http://localhost:3000`。
+
+### 自定义
+
+| 配置项 | 位置 |
+| --- | --- |
+| 配色、宽度、圆角、行高、断点等变量 | `assets/css/dosify.css` 顶部的 `:root` |
+| 目录结构 | `_sidebar.md`（同级缩进即层级；`- 标题` 不带链接即为纯文本分组） |
+| 折叠层级、吸顶、状态记忆等行为 | `index.html` 中的 `window.$docsify.dosifySidebar` |
+
+> 目录层级超过 3 级时，第 4 级及以下将始终展开，不再折叠。
+
+常用控制台 API：
+
+```js
+$dosifySidebar.expandAll()      // 展开所有目录分组
+$dosifySidebar.collapseAll()    // 收起所有目录分组
+$dosifySidebar.togglePanel()    // 收起 / 展开整个侧边栏面板
+$dosifySidebar.refresh()        // 目录被动态修改后重新解析
+```
 
 ---
 

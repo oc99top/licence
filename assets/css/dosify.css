@@ -1,0 +1,453 @@
+/*!
+ * Dosify Theme for docsify
+ * ------------------------------------------------------------------
+ * · 桌面端固定左侧目录 / 移动端抽屉式侧边栏（双端适配）
+ * · 一级 / 二级 / 三级目录可展开、收起
+ * · 未设置链接的目录项渲染为纯文本
+ * · 展开时各级标题吸附在目录顶部，便于快速收起
+ */
+
+/* ============================================================
+   1. 设计变量
+   ============================================================ */
+:root {
+  --dosify-primary: #2563eb;
+  --dosify-primary-strong: #1d4ed8;
+  --dosify-primary-soft: rgba(37, 99, 235, 0.10);
+  --dosify-accent: #16a34a;
+
+  --dosify-bg: #ffffff;
+  --dosify-bg-subtle: #f7f9fc;
+  --dosify-text: #1f2937;
+  --dosify-text-muted: #5b6472;
+  --dosify-border: #e5e9f2;
+  --dosify-code-bg: #f6f8fa;
+
+  --dosify-radius: 8px;
+  --dosify-sidebar-width: 300px;
+  --dosify-content-width: 880px;
+  --dosify-row-height: 34px; /* 需与 dosify-sidebar.js 的 rowHeight 一致 */
+  --dosify-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+
+  /* 覆盖 docsify 主题变量 */
+  --theme-color: var(--dosify-primary);
+  --sidebar-width: var(--dosify-sidebar-width);
+  --content-width: var(--dosify-content-width);
+  --sidebar-background: var(--dosify-bg-subtle);
+  --sidebar-border-color: var(--dosify-border);
+  --sidebar-nav-link-color: var(--dosify-text-muted);
+  --sidebar-nav-link-color--active: var(--dosify-primary);
+  --sidebar-nav-link-font-weight--active: 600;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dosify-primary: #60a5fa;
+    --dosify-primary-strong: #93c5fd;
+    --dosify-primary-soft: rgba(96, 165, 250, 0.14);
+    --dosify-bg: #0f172a;
+    --dosify-bg-subtle: #111c31;
+    --dosify-text: #e5e7eb;
+    --dosify-text-muted: #94a3b8;
+    --dosify-border: #1e293b;
+    --dosify-code-bg: #0b1526;
+    --dosify-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+
+/* ============================================================
+   2. 基础
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--dosify-bg);
+  color: var(--dosify-text);
+}
+
+.sidebar-nav li > a::before,
+.sidebar-nav > ul > li > a::before {
+  display: none !important;
+  content: '' !important;
+}
+
+/* 取消 docsify 默认的悬停下划线（提升选择器权重以覆盖 vue.css） */
+.sidebar-nav ul li a,
+.sidebar-nav ul li a:hover {
+  text-decoration: none;
+}
+
+/* ============================================================
+   3. 侧边栏容器
+   ============================================================ */
+.sidebar {
+  background: var(--dosify-bg-subtle);
+  border-right: 1px solid var(--dosify-border);
+  width: var(--dosify-sidebar-width);
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sidebar .app-name {
+  padding: 16px 20px 6px;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.sidebar .app-name-link {
+  color: var(--dosify-text);
+}
+
+.sidebar .app-name-link img {
+  max-height: 30px;
+}
+
+.sidebar-nav {
+  padding: 10px 10px 64px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-nav li {
+  margin: 2px 0;
+}
+
+/* 子级缩进 + 引导线 */
+.sidebar-nav li.dosify-folder > ul {
+  margin-left: 12px;
+  padding-left: 8px;
+  border-left: 1px dashed var(--dosify-border);
+}
+
+/* 折叠：默认隐藏子列表 */
+.sidebar-nav li.dosify-folder:not(.open) > ul {
+  display: none;
+}
+
+/* 超出可折叠层级：始终展开 */
+.sidebar-nav li.dosify-folder.dosify-static > ul {
+  display: block;
+}
+
+/* 搜索框 */
+.sidebar input[type='search'] {
+  border: 1px solid var(--dosify-border);
+  border-radius: var(--dosify-radius);
+  background: var(--dosify-bg);
+  color: var(--dosify-text);
+}
+
+/* ============================================================
+   4. 目录分组标题（含子级）
+   ============================================================ */
+.sidebar-nav .dosify-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--dosify-row-height);
+  padding: 5px 10px;
+  border-radius: var(--dosify-radius);
+  color: var(--dosify-text);
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.sidebar-nav .dosify-label:hover {
+  background: var(--dosify-primary-soft);
+}
+
+/* 分组标题本身带链接时 */
+.sidebar-nav .dosify-label > a {
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-nav .dosify-label > a:hover {
+  color: var(--dosify-primary);
+}
+
+/* 分级字号 */
+.sidebar-nav li[data-depth='1'] > .dosify-label {
+  font-size: 15px;
+}
+
+.sidebar-nav li[data-depth='2'] > .dosify-label {
+  font-size: 14px;
+}
+
+.sidebar-nav li[data-depth='3'] > .dosify-label {
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.sidebar-nav li[data-depth='4'] > .dosify-label,
+.sidebar-nav li[data-depth='5'] > .dosify-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   5. 展开 / 收起箭头
+   ============================================================ */
+.sidebar-nav .dosify-toggle {
+  flex: none;
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.sidebar-nav .dosify-toggle:hover {
+  background: var(--dosify-primary-soft);
+}
+
+.sidebar-nav .dosify-toggle::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-top: -2px;
+  border-right: 2px solid var(--dosify-text-muted);
+  border-bottom: 2px solid var(--dosify-text-muted);
+  transform: rotate(-45deg); /* 收起：指向右侧 */
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.sidebar-nav .dosify-folder.open > .dosify-label > .dosify-toggle::before {
+  border-color: var(--dosify-primary);
+  transform: rotate(45deg); /* 展开：指向下方 */
+}
+
+/* ============================================================
+   6. 吸顶：展开时各级标题吸附在目录顶部，方便快速收起
+   ============================================================ */
+.sidebar-nav .dosify-folder.open > .dosify-label {
+  position: sticky;
+  top: var(--dosify-sticky-top, 0px);
+  z-index: calc(40 - var(--dosify-depth, 1));
+  background: var(--dosify-bg-subtle);
+}
+
+/* ============================================================
+   7. 叶子项：链接 / 纯文本
+   ============================================================ */
+.sidebar-nav li:not(.dosify-folder) > a {
+  display: flex;
+  align-items: center;
+  min-height: var(--dosify-row-height);
+  padding: 5px 10px;
+  border-radius: var(--dosify-radius);
+  color: var(--dosify-text-muted);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.sidebar-nav li:not(.dosify-folder) > a:hover {
+  background: var(--dosify-primary-soft);
+  color: var(--dosify-primary-strong);
+  text-decoration: none;
+}
+
+/* 当前页面（docsify 把 active 加在 li 上） */
+.sidebar-nav ul li > a.active,
+.sidebar-nav ul li.active > a {
+  background: var(--dosify-primary-soft);
+  color: var(--dosify-primary);
+  font-weight: 600;
+  border-right: 0;
+  box-shadow: inset 3px 0 0 0 var(--dosify-primary);
+}
+
+/* 未设置链接的目录项 → 纯文本 */
+.sidebar-nav .dosify-text {
+  display: flex;
+  align-items: center;
+  min-height: var(--dosify-row-height);
+  padding: 5px 10px;
+  color: var(--dosify-text-muted);
+  font-weight: 500;
+  cursor: default;
+}
+
+/* ============================================================
+   8. 正文排版
+   ============================================================ */
+.markdown-section {
+  max-width: var(--dosify-content-width);
+  padding: 2.2rem 1.6rem 5rem;
+  color: var(--dosify-text);
+}
+
+.markdown-section h1 {
+  font-size: 1.9rem;
+  border-bottom: 1px solid var(--dosify-border);
+  padding-bottom: 0.4rem;
+}
+
+.markdown-section h2 {
+  font-size: 1.45rem;
+  border-bottom: 1px solid var(--dosify-border);
+  padding-bottom: 0.3rem;
+  margin-top: 2.4rem;
+}
+
+.markdown-section a {
+  color: var(--dosify-primary);
+}
+
+.markdown-section code {
+  background: var(--dosify-code-bg);
+  border-radius: 4px;
+}
+
+.markdown-section pre {
+  background: var(--dosify-code-bg);
+  border: 1px solid var(--dosify-border);
+  border-radius: var(--dosify-radius);
+}
+
+.markdown-section pre > code {
+  background: transparent;
+}
+
+.markdown-section blockquote {
+  border-left: 4px solid var(--dosify-primary);
+  background: var(--dosify-primary-soft);
+  border-radius: 0 var(--dosify-radius) var(--dosify-radius) 0;
+  padding: 0.6rem 1rem;
+  color: var(--dosify-text);
+}
+
+.markdown-section table {
+  display: table;
+  width: 100%;
+}
+
+.markdown-section th {
+  background: var(--dosify-bg-subtle);
+}
+
+.markdown-section tr:nth-child(2n) {
+  background: var(--dosify-bg-subtle);
+}
+
+/* ============================================================
+   9. 移动端适配
+   ============================================================ */
+/* 菜单按钮（同时覆盖 docsify 的 body.close .sidebar-toggle{width:284px}） */
+.sidebar-toggle,
+body.close .sidebar-toggle {
+  top: 12px;
+  left: 12px;
+  bottom: auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dosify-bg);
+  border: 1px solid var(--dosify-border);
+  border-radius: 10px;
+  box-shadow: var(--dosify-shadow);
+  transition: left 0.25s ease-out;
+  z-index: 60;
+}
+
+.sidebar-toggle span {
+  background-color: var(--dosify-text) !important;
+}
+
+/* 移动端抽屉遮罩：必须与 .sidebar 处于同一层叠上下文（main 为 z-index:0 的
+   层叠上下文），否则会盖住侧边栏导致整屏变灰。由 dosify-sidebar.js 注入到 main 内。 */
+.dosify-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  background: rgba(15, 23, 42, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out;
+}
+
+.dosify-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 电脑端：菜单按钮常驻，点击即可收起 / 展开侧边栏 */
+@media (min-width: 769px) {
+  .sidebar-toggle {
+    left: calc(var(--dosify-sidebar-width) + 12px);
+  }
+
+  body.close .sidebar-toggle {
+    left: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --dosify-sidebar-width: 82%;
+    --dosify-content-width: 100%;
+  }
+
+  /* 抽屉式侧边栏：关闭态整体移出视口，body.close 时滑入。
+     使用 body .sidebar 提高优先级，以覆盖 docsify 搜索插件注入的
+     内联样式 .sidebar{padding-top:0} */
+  body .sidebar {
+    width: var(--dosify-sidebar-width);
+    padding-top: 64px; /* 避开左上角菜单按钮 */
+    left: 0;
+    transform: translateX(-100%);
+    box-shadow: var(--dosify-shadow);
+  }
+
+  body.close .sidebar {
+    transform: translateX(0);
+  }
+
+  .markdown-section {
+    padding: 4.2rem 1rem 4rem;
+  }
+
+  .sidebar-nav {
+    padding-top: 10px;
+  }
+
+  /* 移动端吸顶层级减一档，避免遮挡顶部留白 */
+  .sidebar-nav .dosify-folder.open > .dosify-label {
+    background: var(--dosify-bg-subtle);
+  }
+}
