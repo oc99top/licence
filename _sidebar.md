@@ -8,10 +8,23 @@
 
 - 二创声明
   - [概览](statements/)
-  - 常见条款
-    - 授权范围
-    - 署名要求
-    - 使用限制
+  - 二创授权声明
+    - [NO2 禁止二创](statements/no2.md)
+    - [y2nb 非商业二创](statements/y2nb.md)
+    - [s2 声明原创二创](statements/s2.md)
+    - [s2nb 非商声明原创二创](statements/s2nb.md)
+    - [p2 授权二创](statements/p2.md)
+    - [o2 开放二创](statements/o2.md)
+  - AI 使用声明
+    - [nAI 禁投 AI](statements/ai/nai.md)
+    - [pAI 授权 AI](statements/ai/pai.md)
+    - [oAI 开放 AI](statements/ai/oai.md)
+  - 可二创内容范围
+    - [occ 仅授权人设](statements/content/occ.md)
+    - [ocp 仅授权画像](statements/content/ocp.md)
+    - [oca 人设 + 画像](statements/content/oca.md)
+    - [och 高尚二创（默认）](statements/content/och.md)
+    - [noooc 保全原角色设定](statements/content/noooc.md)
 
 - 授权证书
   - [概览](licenses/)

@@ -11,8 +11,47 @@
 
 ### 新增
 
+#### 仓库结构
+
 - 补充仓库目录结构：`rules/`、`statements/`、`licenses/`、`oc99/`；
 - 新增各目录的说明文件（`README.md`）与本变更记录。
+
+#### 规则模板
+
+- 新增 `rules/group/normal.md`：**标准群规**模板，含总则、行为准则、禁止行为、广告
+  规范、管理员职责、四级违规处理、举报申诉、知识产权与附则；
+- 新增 `rules/group/normalx.md`：**大白话版群规**，以口语化表述覆盖同等内容，
+  便于直接向群成员公示。
+
+#### 二创声明
+
+- 新增 6 份二创授权声明：
+  - `statements/no2.md` —— 禁止二创（严禁一切形式二创）；
+  - `statements/y2nb.md` —— 非商业二创（无需署名，禁止商用谋利）；
+  - `statements/s2.md` —— 声明原创二创（允许商用，须声明来源）；
+  - `statements/s2nb.md` —— 非商声明原创二创（须声明来源，禁止商用）；
+  - `statements/p2.md` —— 授权二创（须作者专门授权）；
+  - `statements/o2.md` —— 开放二创（允许任何形式二创）；
+- 新增 `statements/ai/`：3 份 AI 使用声明 —— `nAI`（禁投 AI）、`pAI`（授权 AI）、
+  `oAI`（开放 AI）；
+- 新增 `statements/content/`：5 份可二创内容范围 —— `occ`（仅人设）、`ocp`（仅画像）、
+  `oca`（人设 + 画像）、`och`（高尚二创，**默认档**）、`noooc`（保全原角色设定）；
+- 新增 `statements/ai/README.md`、`statements/content/README.md` 索引，含速查表与
+  组合示例；
+- 重写 `statements/README.md`：补充目录树、三类声明速查表、组合用法与占位符说明。
+
+#### 声明体系
+
+- 二创声明采用**三类组合**使用：授权声明（根目录）+ AI 声明（`ai/`）+
+  内容范围（`content/`），例如 `o2 + pAI + oca + och`；
+- 声明冲突时以**更严格**者为准，AI 相关以 `nAI` 优先；
+- 未指定内容范围时**默认适用 `och`（高尚二创）**；
+- 全部声明统一采用「一句话摘要 → 声明信息 → 授权 / 禁止 → 署名 → 违约 → 附则 →
+  如何引用」结构，并使用 `{{OC_NAME}}`、`{{OWNER}}`、`{{VERSION}}`、`{{DATE}}`
+  等占位符。
+
+#### 文档站点
+
 - 新增 docsify 文档站点入口 `index.html` 与侧边栏定义 `_sidebar.md`；
 - 新增 **Dosify 主题**：`assets/css/dosify.css` 与 `assets/js/dosify-sidebar.js`。
 
@@ -40,7 +79,9 @@
 - 电脑端支持收起侧边栏：菜单按钮常驻于侧边栏右侧，收起后正文占满整宽，收起状态记忆到
   `localStorage`；新增 `$dosifySidebar.togglePanel()` 接口；
 - 移除右上角 GitHub 角标（删除配置中的 `repo`）；
-- `README.md` 补充文档站点与主题说明章节。
+- `README.md` 补充文档站点与主题说明章节；
+- `_sidebar.md` 新增「群规」「二创授权声明」「AI 使用声明」「可二创内容范围」四组
+  导航，共 16 条文档链接。
 
 ### 移除
 
