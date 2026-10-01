@@ -255,8 +255,11 @@
       if (link && !isToggle) return;
 
       ev.preventDefault();
+      ev.stopPropagation();
       setOpen(li, !li.classList.contains('open'), true);
     });
+
+    bindDrawerGuard(nav);
 
     nav.addEventListener('keydown', function (ev) {
       if (ev.key !== 'Enter' && ev.key !== ' ') return;
@@ -264,6 +267,25 @@
       if (!btn) return;
       ev.preventDefault();
       btn.click();
+    });
+  }
+
+  /**
+   * 移动端：docsify 会在 body 上监听 click，只要抽屉处于展开态（body.close），
+   * 任何一次点击都会把抽屉收起。这会导致「展开 / 收起目录」时菜单栏自己收起。
+   * 这里只放行「点击可跳转链接」的冒泡（跳转后收起抽屉是期望行为），
+   * 其余交互（折叠箭头、纯文本分组、搜索框等）一律阻止冒泡。
+   */
+  function bindDrawerGuard(nav) {
+    var sidebar = nav.closest ? nav.closest('.sidebar') : null;
+    if (!sidebar || sidebar.dataset.dosifyGuard === '1') return;
+    sidebar.dataset.dosifyGuard = '1';
+
+    sidebar.addEventListener('click', function (ev) {
+      if (!isMobile()) return;
+      var link = ev.target.closest ? ev.target.closest('a[href]') : null;
+      if (link) return;
+      ev.stopPropagation();
     });
   }
 
