@@ -58,13 +58,9 @@
 | 规则模板 | `rules/` | 供项目、社区或活动直接套用的规则框架 |
 | 二创声明 | `statements/` | 二次创作授权范围、署名要求与限制条款 |
 | 授权证书 | `licenses/` | 正式授权文本、证书模板及许可说明 |
-| 站点入口 | `index.html` | docsify 站点入口，启用 Dosify 主题 |
-| 主题样式 | `assets/css/dosify.css` | Dosify 主题样式（手机 / 电脑双端适配） |
-| 侧边栏插件 | `assets/js/dosify-sidebar.js` | 一 / 二 / 三级目录可折叠 |
-| 侧边栏目录 | `_sidebar.md` | 文档站左侧目录结构定义 |
 
 ---
-
+<!--
 ## 在线文档（Dosify 主题）
 
 本仓库内置一套自研文档主题 **Dosify**，基于 [docsify](https://docsify.js.org/) 驱动，可直接使用 GitHub Pages 或任意静态服务器托管。
@@ -110,7 +106,7 @@ $dosifySidebar.refresh()        // 目录被动态修改后重新解析
 ```
 
 ---
-
+--!>
 ## 使用方法
 
 ### 1. 引用官方模板
